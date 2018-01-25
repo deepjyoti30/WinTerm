@@ -17,33 +17,40 @@ def showPath():
     #This one just shows the current path
     print(os.getcwd(), end='>')
 
-def isFile_available(fileName, path):
-    #This function checks if fileName is available in the given path.
+def isFile_available(pathToFile):
+    #This function checks if file is available.
+    #If it finds that pathToFile is a directory then it will check first if the dir is availablbe.
+    #If dir is not available, it will return False. 
     #Return : True or False
+    #Note : pathToFile can be a path to a file or just a file also.
     whole_dir_searched = False
     #This variable checks if the whole directory is searched. If still it is False then the file was not found in the path.
-    path += "\\"
-    if '\\' in path:
+    if '\\' in pathToFile:
+        #if it enters than most probably the pathToFile is a subdirectory.
         try:
-            iniPath = fileToMove[:len(fileToMove)-(fileToMove[::-1].index("\\"))]
-            if not os.path.isdir(iniPath) :
-                print(iniPath+" : No such directory found\a", end='')
+            justThe_path = pathToFile[:len(pathToFile)-(pathToFile[::-1].index("\\"))]
+            if not os.path.isdir(justThe_path) :
+                print(justThe_path+" : No such directory found\a", end='')
                 return False
+            else:
+                File_name = ((pathToFile[::-1])[:-len(pathToFile)+(pathToFile[::-1].index("\\"))])[::-1] #The actual name of the file
+                if File_name in os.listdir(justThe_path):
+                    return True
+                else:
+                    noFile_error(File_name)
+                    return False
+            is_Dir_present = True
         except:
-            pass
-    try:
-        finPath = whereToMove[:len(whereToMove)-(whereToMove[::-1].index("\\"))]
-        if not os.path.isdir(finPath):
-            print(finPath+" : No such directory found\a", end='')
+            print("\aAn unknown error occured. Make Sure your file doesn't have \\ in the name.")
             return False
-    except:
-        pass
+    #If it gets past the try then probably the file is just without subdirs
     try:
-        for files in os.listdir(path):
+        for files in os.listdir(os.getcwd()):
             whole_dir_searched = True
-            if files == fileName:
+            if files == pathToFile:
                 return True
     except:
+        noFile_error(pathToFile)
         return False
     if not whole_dir_searched: 
         return False
@@ -176,33 +183,22 @@ def clear():
 def mv(names):
     #Moves the file to the said directory.
     posSpace = names.index(" ")
-    fileToMove = os.getcwd()+"\\"+names[:posSpace]
-    whereToMove = names[posSpace+1:]
+    fileToMove = os.getcwd()+"\\"+names[:posSpace]  #The path to the file to be moved.
+    whereToMove = names[posSpace+1:]                #The path where it is to be moved. 
+    #Below is the exact File name. 
+    File = ((fileToMove[::-1])[:-len(fileToMove)+(fileToMove[::-1].index("\\"))])[::-1]
+    iniPath = fileToMove[:len(fileToMove)-(fileToMove[::-1].index("\\"))] #Directory where the file should be present. 
     #Need to check if both directories exist.
     #Need to take the path out of fileToMove.
-    try:
-        iniPath = fileToMove[:len(fileToMove)-(fileToMove[::-1].index("\\"))]
-        if not os.path.isdir(iniPath) :
-            print(iniPath+" : No such directory found\a", end='')
-            return False
-    except:
-        pass
-    try:
-        finPath = whereToMove[:len(whereToMove)-(whereToMove[::-1].index("\\"))]
-        if not os.path.isdir(finPath):
-            print(finPath+" : No such directory found\a", end='')
-            return False
-    except:
-        pass
-    #If the directories exist, we need to check if the said file is available
-    try:
-        File = ((fileToMove[::-1])[:-len(fileToMove)+(fileToMove[::-1].index("\\"))])[::-1]
+    if not isFile_available():
+
+    #If the directories exist, we need to check if the said file is available        
         #flag is to check if the file is found in the given folder
-        flag = False
+        '''flag = False
         if isFile_available(File, iniPath):
             flag = True
     except:
-        pass
+        pass'''
     if flag:
         os.rename(fileToMove, whereToMove)
     else:
