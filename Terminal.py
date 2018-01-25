@@ -19,9 +19,25 @@ def showPath():
 
 def isFile_available(fileName, path):
     #This function checks if fileName is available in the given path.
-    #Returns : True or False
+    #Return : True or False
     whole_dir_searched = False
     #This variable checks if the whole directory is searched. If still it is False then the file was not found in the path.
+    path += "\\"
+    if '\\' in path:
+        try:
+            iniPath = fileToMove[:len(fileToMove)-(fileToMove[::-1].index("\\"))]
+            if not os.path.isdir(iniPath) :
+                print(iniPath+" : No such directory found\a", end='')
+                return False
+        except:
+            pass
+    try:
+        finPath = whereToMove[:len(whereToMove)-(whereToMove[::-1].index("\\"))]
+        if not os.path.isdir(finPath):
+            print(finPath+" : No such directory found\a", end='')
+            return False
+    except:
+        pass
     try:
         for files in os.listdir(path):
             whole_dir_searched = True
@@ -34,7 +50,7 @@ def isFile_available(fileName, path):
 
 def noFile_error(Filename):
     #This function shows that Filename was not found and calls main after execution.
-    print(Filename+" : Not Found\a", end='')
+    print(Filename+" : Not Found\a", end='\n')
     main()
 
 def showman(command):
@@ -166,7 +182,7 @@ def mv(names):
     #Need to take the path out of fileToMove.
     try:
         iniPath = fileToMove[:len(fileToMove)-(fileToMove[::-1].index("\\"))]
-        if not os.path.isdir(iniPath):
+        if not os.path.isdir(iniPath) :
             print(iniPath+" : No such directory found\a", end='')
             return False
     except:
@@ -201,13 +217,19 @@ def checkCat(name):
     #We can make the OPTION default to read which will read and display the contents of the file
     #We need to make a list of options available to check if the passed option is valid.
     #If its not a valid option then pass the option to file name and see if the file exists in the working directory
-    availableOptions = ['n', 'e', ]
-    Option = "read"
+    availableOptions = ['n', 'e', 'T', 'r']
+    Option = "r"
     File = ""
+    posSpace = -1
     while True:
         try:
-            posSpace = name.index(" ")
-            Option = name[1:posSpace]
+            try:
+                #We need to put this in Try because if no option is added it will show error
+                #But no option means we just need to read the file
+                posSpace = name.index(" ") 
+                Option = name[1:posSpace]
+            except:
+                pass
             if Option not in availableOptions:
                 print(Option+" : No such Option found in cat", end='')
                 return False
@@ -222,16 +244,25 @@ def checkCat(name):
 
 def cat_exec(Option, File1, File2 = " "):
     open_the_File = open(File1, "r")
-    if Option == "e":
-        pass
-    elif Option == "n":
-        countLine = 0
-        while True:
+    countLine = 0
+    while True:
             readLine = open_the_File.readline()
-            countLine += 1
             if not readLine:
                 break
-            print(str(countLine)+" "+readLine)
+            if Option == "n":
+                countLine += 1
+                print(str(countLine)+" "+readLine, end='')
+            elif Option == "e":
+                if readLine == " ":
+                    print("$", end='')
+                else:
+                    print(readLine[:len(readLine)-1]+"$", end='\n')
+            elif Option == "T":
+                '^I'.join(readLine.split())
+                print(readLine, end='')
+            elif Option == 'r':
+                print(readLine, end='')
+        
 
 #Definition ends here.
 
