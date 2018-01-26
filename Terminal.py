@@ -370,7 +370,7 @@ def grep(command):
             option_not_available(Option, "grep")
             return False
         file_name = command[-command[::-1].index('"')+1:]
-        if file_name != 'file*.*'
+        if file_name != 'file*.*':
             if not is_available(file_name):
                 noFile_error(file_name)
                 return False
@@ -388,12 +388,14 @@ def grep_exec(Option, fileName, keyword):
         if fileName != 'file*.*':
             find_in_File(fileName, keyword)
         else:
-            for extension in range(len(extension_of_Files_tosearch)):
-                find_in_all_readable(keyword, extension, path)
+            for i in range(len(extension_of_Files_tosearch)):
+                input(extension_of_Files_tosearch[i])
+                find_in_all_readable(keyword, extension_of_Files_tosearch[i], give_rootPath())
 
 def find_in_File(file, keyword, conditions = ''):
     #This will find keyword in file
     open_File = open(file, 'r')
+    print("Finding in "+file, end=':\n')
     while True:
         read_word = open_File.readline()
         if not read_word:
@@ -405,12 +407,12 @@ def find_in_all_readable(keyword, extension, path):
     #This will find the keyword in all files with given extension
     for stuff in os.listdir(path):
         if os.path.isdir(stuff) and stuff != "System Volume Information":
-            thread = grepThread()
+            thread = grepThread(keyword, extension, path+"\\"+stuff)
             thread.start()
             thread.join()
         else:
             if stuff.endswith(extension):
-                find_in_File(stuff, keyword)
+                find_in_File(path+"\\"+stuff, keyword)
 
 #------COMMANDS/----------
 #The function list ends here.
