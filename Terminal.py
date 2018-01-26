@@ -100,6 +100,7 @@ def showman(command):
     'locate' : 'Usage : locate [FILENAME] \nUsed to locate a file in the working Drive.\nNOTE : Make sure not to try on the drive where Windows is installed since there is lack of permission.',
     'grep' : 'Usage : grep [OPTION] "KEYWORD" [FILENAME]. \nUsed to find keyword in the given file.',
     'rmdir' : 'Usage : rmdir [DIRECTORY NAME]\n Used to remove directories.',
+    'cp' : 'Usage : cp [SOURCE] [DESTINATION]\n Used to Copy files or folders', 
     }
     #fun is a dictionary. [Functio Name] : [Command Name]
     #It should be updated after adding a working function
@@ -375,6 +376,36 @@ def openFile(name):
     else:
         os.startfile(name)
 
+#-------cp---------
+def cp(name):
+    #This function will work similar to cp.
+    #We need to extract the source and destination from from name
+    posSpace = name.index(" ")
+    #The source and destination should be seperated by a spcace
+    is_dir = False
+    try:
+        src = name[:posSpace]
+        input(src+" is src")
+        #Now check if src exists or not.
+        if is_available(src):
+            #So it exists. Now we nned to check if its a file or folder.
+            if os.path.isdir(src):
+                is_dir = True
+        #Now we need to check destination
+        dst = name[posSpace+1:]
+        input(dst+" is dst")
+        if is_dir:
+            if not is_available(os.path.dirname(dst)):
+                MakeDir(os.path.dirname(dst))
+            shutil.copytree(src, dst)
+        else:
+            #We need to check if the directory of dst exists or not
+            if not is_available(os.path.dirname(dst)):
+                MakeDir(os.path.dirname(dst))
+            shutil.copy(src, dst)
+    except:
+        unknown_error(6)
+
 #-------grep---------
 
 available_Options_grep = ['', '-n', '-v', '^', '$', '-c']
@@ -494,6 +525,8 @@ def runCommand(cmd):
         checkCat(cmd[4:])
     elif cmd[:4] == 'grep':
         grep(cmd[5:])
+    elif cmd[:2] == 'cp':
+        cp(cmd[3:])
     else:
         openFile(cmd)
 
