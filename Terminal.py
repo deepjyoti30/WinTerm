@@ -356,7 +356,7 @@ def openFile(name):
 
 #-------grep---------
 
-available_Options_grep = ['', '-n', '-v']
+available_Options_grep = ['', '-n', '-v', '^', '$']
 extension_of_Files_tosearch = ['txt', 'html', 'py',]
 
 def grep(command):
@@ -379,6 +379,15 @@ def grep(command):
         #If file_name == file*.* then we need to check all files with extensions in extension_of_Files_tosearch 
         #Now that we have the file we want to search and the option
         keyword = command[command.index('"')+1:-1-command[::-1].index('"')]
+        #We need to check if start of keyword has ^ or end has $
+        if keyword[0] == '^':
+            #We need to show only the ones that begin with keyword. 
+            Option = '^'
+            keyword = keyword[1:]
+        elif keyword[len(keyword)-1] == '$':
+            #We need to show only the ones that end with keyword. 
+            Option = '$'
+            keyword = keyword[:-1]
         grep_exec(Option, file_name, keyword)
         #Now we have the kewyword too.
     except:
@@ -392,9 +401,8 @@ def grep_exec(Option, fileName, keyword):
             find_in_File(fileName, keyword)
         else:
             for i in range(len(extension_of_Files_tosearch)):
-                input(extension_of_Files_tosearch[i])
                 find_in_all_readable(keyword, extension_of_Files_tosearch[i], give_rootPath())
-    elif Option == '-n' or Option == '-v':
+    elif Option == '-n' or Option == '-v' or Option == '^' or Option == '$':
         find_in_File(fileName, keyword, Option)
 
 def find_in_File(file, keyword, conditions = ''):
@@ -411,6 +419,12 @@ def find_in_File(file, keyword, conditions = ''):
             print(str(countLine)+" "+read_word, end='')
         elif conditions == '-v':
             if keyword not in read_word:
+                print(read_word, end='')
+        elif conditions == '^':
+            if read_word[:len(keyword)] == keyword:
+                print(read_word, end='')
+        elif conditions == '$':
+            if read_word[-len(keyword):] == keyword:
                 print(read_word, end='')
         else:
             if keyword in read_word:
