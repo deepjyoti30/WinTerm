@@ -99,6 +99,7 @@ def showman(command):
     'cat':'Usage : cat [OPTION] [FILENAME] \nUsed to ',
     'locate' : 'Usage : locate [FILENAME] \nUsed to locate a file in the working Drive.\nNOTE : Make sure not to try on the drive where Windows is installed since there is lack of permission.',
     'grep' : 'Usage : grep [OPTION] "KEYWORD" [FILENAME]. \nUsed to find keyword in the given file.',
+    'rmdir' : 'Usage : rmdir [DIRECTORY NAME]\n Used to remove directories.',
     }
     #fun is a dictionary. [Functio Name] : [Command Name]
     #It should be updated after adding a working function

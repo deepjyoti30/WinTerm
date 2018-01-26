@@ -24,6 +24,7 @@ Please add comments wherever is necessary. Indentation is always appreciated.
 9. mv : Working
 10. locate : Working (No options should be used)
 11. grep : -r, -i and searching as regular expression not working
+12. rmdir : Working
 
 ## License
 
