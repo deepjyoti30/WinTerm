@@ -25,6 +25,7 @@ Below is the list of all functions working properly.
 8. clear
 9. mv
 10. locate
+11. grep(Partially Working)
 
 ## License
 
