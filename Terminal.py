@@ -354,7 +354,7 @@ def openFile(name):
 
 #-------grep---------
 
-available_Options_grep = ['', ]
+available_Options_grep = ['', '-n']
 extension_of_Files_tosearch = ['txt', 'html', 'py',]
 
 def grep(command):
@@ -391,17 +391,22 @@ def grep_exec(Option, fileName, keyword):
             for i in range(len(extension_of_Files_tosearch)):
                 input(extension_of_Files_tosearch[i])
                 find_in_all_readable(keyword, extension_of_Files_tosearch[i], give_rootPath())
+    elif Option == '-n':
+        find_in_File(fileName, keyword, Option)
 
 def find_in_File(file, keyword, conditions = ''):
     #This will find keyword in file
     open_File = open(file, 'r')
     print("Finding in "+file, end=':\n')
+    countLine = 0
     while True:
         read_word = open_File.readline()
+        if conditions == '-n':
+            countLine += 1
         if not read_word:
             return True
         if keyword in read_word:
-            print(read_word, end='')
+            print(str(countLine)+" "+read_word, end='')
 
 def find_in_all_readable(keyword, extension, path):
     #This will find the keyword in all files with given extension
