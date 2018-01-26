@@ -29,7 +29,7 @@ def showPath():
 #-------ERROR-------
 #Below are definitions of errors to be shown.
 
-def noFile_error(Filename):
+def noFile_error(Filename=''):
     #This function shows that Filename was not found.
     #End the exec of the function after calling this  function
     print(Filename+" : Not Found\a")
@@ -195,26 +195,29 @@ def touch(nameOfFile):
 def rm(fileName):
     #Remove command.
     try:
-        if fileName[:3] == "-rf":
+        if fileName[1:4] == "-rf":
+            if is_available(fileName[5:]):
+                shutil.rmtree(fileName[5:])
+            else:
+                noFile_error(fileName[5:])
+        elif fileName[:3] == 'dir':
             if is_available(fileName[4:]):
                 shutil.rmtree(fileName[4:])
-            else:
-                noFile_error(fileName[4:])
-        elif is_available(fileName):
-            if os.path.isdir(fileName):
+        elif is_available(fileName[1:]):
+            if os.path.isdir(fileName[1:]):
                 counter  = 0
-                for files in os.listdir(fileName):
+                for files in os.listdir(fileName[1:]):
                     if counter > 0 or not files:
                         break
                     counter += 1
                 if counter > 0:
                     print("\a Folder is not empty!", end='')
                 else:
-                    os.rmdir(fileName)
+                    os.rmdir(fileName[1:])
             else:
-                os.remove(fileName)
+                os.remove(fileName[1:])
         else:
-            noFile_error(fileName)
+            noFile_error()
     except:
         unknown_error(5)
 
@@ -479,7 +482,7 @@ def runCommand(cmd):
     elif cmd[:5] == "touch":
         touch(cmd[6:])
     elif cmd[:2] == "rm":
-        rm(cmd[3:])
+        rm(cmd[2:])
     elif cmd[:5] == "mkdir":
         MakeDir(cmd[6:])
     elif cmd[:5] == "clear":
