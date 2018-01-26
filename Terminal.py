@@ -17,48 +17,52 @@ def showPath():
     #This one just shows the current path
     print(os.getcwd(), end='>')
 
-def isFile_available(pathToFile):
-    #This function checks if file is available.
-    #If it finds that pathToFile is a directory then it will check first if the dir is availablbe.
-    #If dir is not available, it will return False. 
-    #Return : True or False
-    #Note : pathToFile can be a path to a file or just a file also.
-    whole_dir_searched = False
-    #This variable checks if the whole directory is searched. If still it is False then the file was not found in the path.
-    if '\\' in pathToFile:
-        #if it enters than most probably the pathToFile is a subdirectory.
-        try:
-            justThe_path = pathToFile[:len(pathToFile)-(pathToFile[::-1].index("\\"))]
-            if not os.path.isdir(justThe_path) :
-                print(justThe_path+" : No such directory found\a", end='')
-                return False
-            else:
-                File_name = ((pathToFile[::-1])[:-len(pathToFile)+(pathToFile[::-1].index("\\"))])[::-1] #The actual name of the file
-                if File_name in os.listdir(justThe_path):
-                    return True
-                else:
-                    noFile_error(File_name)
-                    return False
-            is_Dir_present = True
-        except:
-            print("\aAn unknown error occured. Make Sure your file doesn't have \\ in the name.")
-            return False
-    #If it gets past the try then probably the file is just without subdirs
-    try:
-        for files in os.listdir(os.getcwd()):
-            whole_dir_searched = True
-            if files == pathToFile:
-                return True
-    except:
-        noFile_error(pathToFile)
-        return False
-    if not whole_dir_searched: 
-        return False
+#-------ERROR-------
+#Below are definitions of errors to be shown.
 
 def noFile_error(Filename):
     #This function shows that Filename was not found and calls main after execution.
-    print(Filename+" : Not Found\a", end='\n')
+    print(Filename+" : Not Found\a")
     main()
+
+def unknown_error():
+    print("\aSome unknown error occured.")
+
+#----------Error def end here------------
+
+def is_available(pathToFile):
+    #This function checks if file or folder is available.
+    #Return : True or False
+    #Note : pathToFile can be a path to a file or just a file also.
+    #Here we need to check three things.
+    #If pathToFile is a folder or it is a path to a file within folders or just a file in the working directory. 
+    #Try to see if it is a folder.
+    try:
+        if os.path.isdir(pathToFile) : 
+            #It is a folder
+            return True
+    except:
+        pass
+        #If not a folder then try to see if it is a file within folders.
+    try:
+        file_Path = os.path.dirname(pathToFile) 
+        #file_Path is the directory name where the file should be.
+        file_Name = os.path.basename(pathToFile) 
+        #file_Name is the files name
+        #If pathToFile is just a filename without directories than file_Path is equal to ""
+        if file_Path != "":
+            if file_Name in os.listdir(file_Path) :
+                #It is a file within folders
+                return True
+        else:
+            if file_Name in os.listdir(os.getcwd()) :
+                #It is a file in the working directory
+                return True
+            else:
+                noFile_error(pathToFile)
+                return False
+    except:
+        unknown_error()
 
 def showman(command):
     #This shows the available functions in this terminal
@@ -156,7 +160,7 @@ def touch(nameOfFile):
 def rm(fileName):
     #Remove command.
     if fileName[:3] == "-rf":
-            os.remove(cmd[4:])
+            os.remove(fileName[4:])
     else:
         if os.path.isdir(fileName):
             counter  = 0
@@ -167,14 +171,19 @@ def rm(fileName):
             if counter > 0:
                 print("\a Folder is not empty!", end='')
         else:
-            if isFile_available(fileName, os.getcwd()):
+            if is_available(fileName):
                 os.remove(fileName)
             else:
                 noFile_error(fileName)
 
 def MakeDir(name):
     #Makes a new folder.
-    os.mkdir(name)
+    #Before making we need to check if existing directory with same name is available.
+    #MAYBE we can do that by try
+    try:
+        os.mkdir(name)
+    except:
+        print("\aDirectory with same name exists.", end='')
 
 def clear():
     #Clears the screen.
@@ -183,27 +192,23 @@ def clear():
 def mv(names):
     #Moves the file to the said directory.
     posSpace = names.index(" ")
-    fileToMove = os.getcwd()+"\\"+names[:posSpace]  #The path to the file to be moved.
-    whereToMove = names[posSpace+1:]                #The path where it is to be moved. 
-    #Below is the exact File name. 
-    File = ((fileToMove[::-1])[:-len(fileToMove)+(fileToMove[::-1].index("\\"))])[::-1]
-    iniPath = fileToMove[:len(fileToMove)-(fileToMove[::-1].index("\\"))] #Directory where the file should be present. 
-    #Need to check if both directories exist.
-    #Need to take the path out of fileToMove.
-    if not isFile_available():
-
-    #If the directories exist, we need to check if the said file is available        
-        #flag is to check if the file is found in the given folder
-        '''flag = False
-        if isFile_available(File, iniPath):
-            flag = True
+    try:
+        fileToMove = os.getcwd()+"\\"+names[:posSpace]  #The path to the file to be moved.
     except:
-        pass'''
-    if flag:
+        print("\aPlease follow the syntax of command.", end='')
+        return False
+    if not is_available(fileToMove):
+        return False
+    whereToMove = names[posSpace+1:]                #The path where it is to be moved. 
+    if not is_available(whereToMove):
+        return False
+    #If it got past above then probably the source and destination are available
+    try:
         os.rename(fileToMove, whereToMove)
-    else:
-        noFile_error(fileToMove)
-
+    except:
+       unknown_error()
+ 
+#--------cat-------------
 #Definition of all functions used for cat start here. 
 
 def checkCat(name):
@@ -230,7 +235,7 @@ def checkCat(name):
                 print(Option+" : No such Option found in cat", end='')
                 return False
             File = name[posSpace+1:]
-            if not isFile_available(File, os.getcwd()):
+            if not is_available(File, os.getcwd()):
                 noFile_error(File)
                 break
         except:
