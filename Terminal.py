@@ -11,8 +11,6 @@ class myThread(threading.Thread):
     def run(self):
         List(self.pathToSearch, self.fileTofind)
 
-rootpath = "E:\\"
-
 def showPath():
     #This one just shows the current path
     print(os.getcwd(), end='>')
@@ -151,8 +149,14 @@ def ls(cmd):
                 return False
         except:
             pass
+    printCount = 0
+    #printCount is just to keep track of printing so that the output doesnt look messy
     for files in os.listdir(folder):
+        if printCount == 4 :
+            print("")
+            printCount = 0
         print(files, end=' ')
+        printCount += 1
 
 def touch(nameOfFile):
     #Makes a new file.
@@ -185,7 +189,7 @@ def MakeDir(name):
     try:
         os.mkdir(name)
     except:
-        print("\aDirectory with same name exists.", end='')
+        print("\aERROR : Directory with same name exists.", end='')
 
 def clear():
     #Clears the screen.
@@ -231,9 +235,10 @@ def checkCat(name):
     #We can make the OPTION default to read which will read and display the contents of the file
     #We need to make a list of options available to check if the passed option is valid.
     #If its not a valid option then pass the option to file name and see if the file exists in the working directory
-    availableOptions = ['n', 'e', 'T', 'r']
+    availableOptions = ['n', 'e', 'T', 'r', 'm', 'a', 'w']
     Option = "r"
     File = ""
+    File2 = ' '
     posSpace = -1
     while True:
         try:
@@ -243,20 +248,51 @@ def checkCat(name):
                 posSpace = name.index(" ") 
                 Option = name[1:posSpace]
             except:
-                pass
+                #If it failed in try then check if a new file should be created, i:e if ><filename> is passed
+                try:
+                    if name[0] == '>' : 
+                        #Probably a new file should be made.
+                        Option = 'm'
+                        File = name[1:]
+                        break 
+                    else:
+                        #If it enters here then we need to check for cat [Filename] > [Filename]
+                        try:
+                            if '>' in name:
+                                pos = name.index('>')
+                                if name[pos+1] == '>':
+                                    #This means we need to append
+                                    Option = 'a'
+                                    File = name[:pos-1]
+                                    File2 = name[pos+3:]
+                                else:
+                                    #This means we need to overwrite stuff in File2 with what is in File1
+                                    Option = 'w'
+                                    File = name[:pos-1]
+                                    File2 = name[pos+2:]
+                            if not is_available(File2):
+                                noFile_error()
+                                return False
+                        except:
+                            unknown_error(3)
+                            return False
+                except:
+                    unknown_error(3)
+                    return False
             if Option not in availableOptions:
                 print(Option+" : No such Option found in cat", end='')
                 return False
             File = name[posSpace+1:]
-            if not is_available(File, os.getcwd()):
-                noFile_error(File)
-                break
         except:
             pass
-        cat_exec(Option, File)
+        if not is_available(File):
+                noFile_error(File)
+                return False
+        cat_exec(Option, File, File2)
         break
 
 def cat_exec(Option, File1, File2 = " "):
+    openMode = {'w':'w', 'a':'a'}
     open_the_File = open(File1, "r")
     countLine = 0
     while True:
@@ -276,7 +312,12 @@ def cat_exec(Option, File1, File2 = " "):
                 print(readLine, end='')
             elif Option == 'r':
                 print(readLine, end='')
-        
+            elif Option == 'm':
+                touch(File1)
+            elif Option == 'a' or Option == 'w':
+                open_File2 = open(File2, openMode[Option])
+                open_File2.write(readLine)
+    open_the_File.close()    
 
 #Definition ends here.
 
