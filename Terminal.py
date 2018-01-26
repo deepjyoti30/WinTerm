@@ -35,7 +35,7 @@ def noFile_error(Filename):
 
 def unknown_error(param):
     #param is used to know which function called this error
-    print("\aSome unknown error occured. Err no : "+str(param), end='')
+    print("\aSome unknown error occured. Err no : "+str(param)+"\nPlease take a look at the command syntax using 'man [COMMAND]'", end='')
 
 def option_not_available(option, command):
     #This will show if the provided option is not found available for the command
@@ -96,7 +96,9 @@ def showman(command):
     'clear':'Usage : clear \nUsed to clear the screen.',
     'mv':'Usage : mv [SOURCE] [DESTINATION] \nUsed to move a file from SOURCE to DESTINATION',
     'cat':'Usage : cat [OPTION] [FILENAME] \nUsed to ',
-    'locate' : 'Usage : locate [FILENAME] \nUsed to locate a file in the working Drive.\nNOTE : Make sure not to try on the drive where Windows is installed since there is lack of permission.'}
+    'locate' : 'Usage : locate [FILENAME] \nUsed to locate a file in the working Drive.\nNOTE : Make sure not to try on the drive where Windows is installed since there is lack of permission.',
+    'grep' : 'Usage : grep [OPTION] "KEYWORD" [FILENAME]. \nUsed to find keyword in the given file.',
+    }
     #fun is a dictionary. [Functio Name] : [Command Name]
     #It should be updated after adding a working function
     try:
@@ -354,7 +356,7 @@ def openFile(name):
 
 #-------grep---------
 
-available_Options_grep = ['', '-n']
+available_Options_grep = ['', '-n', '-v']
 extension_of_Files_tosearch = ['txt', 'html', 'py',]
 
 def grep(command):
@@ -380,7 +382,8 @@ def grep(command):
         grep_exec(Option, file_name, keyword)
         #Now we have the kewyword too.
     except:
-        pass
+        unknown_error(4)
+        return False
 
 def grep_exec(Option, fileName, keyword):
     #This will execute the grep command
@@ -391,7 +394,7 @@ def grep_exec(Option, fileName, keyword):
             for i in range(len(extension_of_Files_tosearch)):
                 input(extension_of_Files_tosearch[i])
                 find_in_all_readable(keyword, extension_of_Files_tosearch[i], give_rootPath())
-    elif Option == '-n':
+    elif Option == '-n' or Option == '-v':
         find_in_File(fileName, keyword, Option)
 
 def find_in_File(file, keyword, conditions = ''):
@@ -401,12 +404,17 @@ def find_in_File(file, keyword, conditions = ''):
     countLine = 0
     while True:
         read_word = open_File.readline()
-        if conditions == '-n':
-            countLine += 1
         if not read_word:
             return True
-        if keyword in read_word:
+        if conditions == '-n':
+            countLine += 1
             print(str(countLine)+" "+read_word, end='')
+        elif conditions == '-v':
+            if keyword not in read_word:
+                print(read_word, end='')
+        else:
+            if keyword in read_word:
+                print(read_word, end='')
 
 def find_in_all_readable(keyword, extension, path):
     #This will find the keyword in all files with given extension
