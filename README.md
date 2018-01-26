@@ -11,6 +11,20 @@ A Terminal for Windows. Works exactly similar to Terminal in LINUX.
 
 Please add comments wherever is necessary. Indentation is always appreciated.
 
+## Working Functions
+
+Below is the list of all functions working properly.
+
+1. ls
+2. man
+3. cd
+4. touch
+5. cat(Partially working)
+6. rm
+7. mkdir
+8. clear
+9. mv
+
 ## License
 
 This project is licensed under the Apache License Version 2.0 - see the [LICENSE.md](LICENSE) for details.
