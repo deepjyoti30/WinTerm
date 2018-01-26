@@ -83,6 +83,7 @@ def showman(command):
     except:
         print("Please enter a valid Command\a. The Syntax is man [COMMAND NAME]", end='')
 
+#------COMMANDS--------
 #Below is the definition of all the commands.
 
 #Locate functions all def start here
@@ -333,10 +334,11 @@ def openFile(name):
     else:
         os.startfile(name)
 
-#The function list ends here. Below is the main()
+#------COMMANDS/----------
+#The function list ends here.
 
 def runCommand(cmd):
-    #This function executes the command
+    #This function checks the command and sends it to be executed. 
     if cmd == "exit":
         return 0
     elif cmd[:2] == "ls":
