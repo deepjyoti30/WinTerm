@@ -24,7 +24,12 @@ Below is the list of all functions working properly.
 7. mkdir
 8. clear
 9. mv
+10. locate
 
 ## License
 
 This project is licensed under the Apache License Version 2.0 - see the [LICENSE.md](LICENSE) for details.
+
+### NOTE
+
+Some syntax may not be exactly same to Linux. Please use man [COMMAND] to see the syntax.
