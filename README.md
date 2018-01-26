@@ -13,13 +13,13 @@ Please add comments wherever is necessary. Indentation is always appreciated.
 
 ## Working Functions
 
-ls, man, cd, touch, rm, rmdir, mkdir, clear, mv, locate.
+**ls**, **man**, **cd**, **touch**, **rm**, **rmdir**, **mkdir**, **clear**, **mv**, **locate**.
 
 ## Functions in Progress
 
-Those Fuctions which lack a few Options but are usable.
+*Those Fuctions which lack a few Options but are usable.*
 
-grep, cat.
+**grep**, **cat**.
 
 ## License
 
