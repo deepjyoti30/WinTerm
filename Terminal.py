@@ -19,13 +19,18 @@ def showPath():
 #Below are definitions of errors to be shown.
 
 def noFile_error(Filename):
-    #This function shows that Filename was not found and calls main after execution.
+    #This function shows that Filename was not found.
+    #End the exec of the function after calling this  function
     print(Filename+" : Not Found\a")
-    main()
 
 def unknown_error(param):
     #param is used to know which function called this error
-    print("\aSome unknown error occured. Err no : "+str(param))
+    print("\aSome unknown error occured. Err no : "+str(param), end='')
+
+def option_not_available(option, command):
+    #This will show if the provided option is not found available for the command
+    #End the exec of the function after calling this  function
+    print(option+"\a : No such option available in "+command+" command")
 
 #----------Error def end here------------
 
@@ -239,7 +244,7 @@ def checkCat(name):
     #We can make the OPTION default to read which will read and display the contents of the file
     #We need to make a list of options available to check if the passed option is valid.
     #If its not a valid option then pass the option to file name and see if the file exists in the working directory
-    availableOptions = ['n', 'e', 'T', 'r', 'm', 'a', 'w']
+    available_Options_cat = ['n', 'e', 'T', 'r', 'm', 'a', 'w']
     Option = "r"
     File = ""
     File2 = ' '
@@ -283,8 +288,8 @@ def checkCat(name):
                 except:
                     unknown_error(3)
                     return False
-            if Option not in availableOptions:
-                print(Option+" : No such Option found in cat", end='')
+            if Option not in available_Options_cat:
+                option_not_available(Option, "cat")
                 return False
             File = name[posSpace+1:]
         except:
@@ -337,6 +342,50 @@ def openFile(name):
     else:
         os.startfile(name)
 
+#-------grep---------
+
+available_Options_grep = ['', ]
+extension_of_Files_tosearch = ['txt', 'html', 'py',]
+
+def grep(command):
+    #This function will work like the grep command.
+    #The syntax is grep [OPTION] "[string to find]" [FILENAME]
+    #If no FILENAME is provided, it will search the root directory of the working path. 
+    Option = ''
+    try:
+        pos = command.index('"')
+        if pos != 0:
+            Option = command[:pos-1]
+        if Option not in available_Options_grep:
+            option_not_available(Option, "grep")
+            return False
+        file_name = command[-command[::-1].index('"')+1:]
+        if not is_available(file_name):
+            noFile_error(file_name)
+            return False
+        #Now that we have the file we want to search and the option
+        keyword = command[command.index('"')+1:-1-command[::-1].index('"')]
+        grep_exec(Option, file_name, keyword)
+        #Now we have the kewyword too.
+    except:
+        pass
+
+def find_in_File(file, keyword, conditions = ''):
+    #This will find keyword in file
+    open_File = open(file, 'r')
+    while True:
+        read_word = open_File.readline()
+        if not read_word:
+            return True
+        if keyword in read_word:
+            print(read_word, end='')
+
+def grep_exec(Option, fileName, keyword):
+    #This will execute the grep command
+    if Option == '':
+        find_in_File(fileName, keyword)
+
+
 #------COMMANDS/----------
 #The function list ends here.
 
@@ -364,6 +413,8 @@ def runCommand(cmd):
         mv(cmd[3:])
     elif cmd[:3] == "cat":
         checkCat(cmd[4:])
+    elif cmd[:4] == 'grep':
+        grep(cmd[5:])
     else:
         openFile(cmd)
 
