@@ -13,13 +13,14 @@ class myThread(threading.Thread):
 
 #Below is a class to run functions used in grep in multiple threads
 class grepThread(threading.Thread):
-    def __init__(self, keyword, extension, path):
+    def __init__(self, keyword, extension, path, Option):
         threading.Thread.__init__(self)
         self.keyword = keyword
         self.extension = extension
         self.path = path
+        self.Option = Option
     def run(self):
-        find_in_all_readable(self.keyword, self.extension, self.path)
+        find_in_all_readable(self.keyword, self.extension, self.path, self.Option)
 
 def showPath():
     #This one just shows the current path
@@ -356,7 +357,7 @@ def openFile(name):
 
 #-------grep---------
 
-available_Options_grep = ['', '-n', '-v', '^', '$']
+available_Options_grep = ['', '-n', '-v', '^', '$', '-c']
 extension_of_Files_tosearch = ['txt', 'html', 'py',]
 
 def grep(command):
@@ -396,27 +397,26 @@ def grep(command):
 
 def grep_exec(Option, fileName, keyword):
     #This will execute the grep command
-    if Option == '':
-        if fileName != 'file*.*':
-            find_in_File(fileName, keyword)
-        else:
-            for i in range(len(extension_of_Files_tosearch)):
-                find_in_all_readable(keyword, extension_of_Files_tosearch[i], give_rootPath())
-    elif Option == '-n' or Option == '-v' or Option == '^' or Option == '$':
+    if fileName != 'file*.*':
         find_in_File(fileName, keyword, Option)
+    else:
+        for i in range(len(extension_of_Files_tosearch)):
+            find_in_all_readable(keyword, extension_of_Files_tosearch[i], give_rootPath(), Option)
 
 def find_in_File(file, keyword, conditions = ''):
     #This will find keyword in file
     open_File = open(file, 'r')
     print("Finding in "+file, end=':\n')
     countLine = 0
+    countmatch = 0
     while True:
         read_word = open_File.readline()
         if not read_word:
             return True
         if conditions == '-n':
             countLine += 1
-            print(str(countLine)+" "+read_word, end='')
+            if keyword in read_word:
+                print(str(countLine)+" "+read_word, end='')
         elif conditions == '-v':
             if keyword not in read_word:
                 print(read_word, end='')
@@ -426,20 +426,24 @@ def find_in_File(file, keyword, conditions = ''):
         elif conditions == '$':
             if read_word[-len(keyword):] == keyword:
                 print(read_word, end='')
+        elif conditions == '-c':
+            if keyword in read_word:
+                countmatch += 1
+                print("Match : "+str(countmatch)+" "+read_word, end='')
         else:
             if keyword in read_word:
                 print(read_word, end='')
 
-def find_in_all_readable(keyword, extension, path):
+def find_in_all_readable(keyword, extension, path, Option = ''):
     #This will find the keyword in all files with given extension
     for stuff in os.listdir(path):
         if os.path.isdir(stuff) and stuff != "System Volume Information":
-            thread = grepThread(keyword, extension, path+"\\"+stuff)
+            thread = grepThread(keyword, extension, path+"\\"+stuff, Option)
             thread.start()
             thread.join()
         else:
             if stuff.endswith(extension):
-                find_in_File(path+"\\"+stuff, keyword)
+                find_in_File(path+"\\"+stuff, keyword, Option)
 
 #------COMMANDS/----------
 #The function list ends here.
