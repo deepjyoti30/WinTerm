@@ -25,8 +25,9 @@ def noFile_error(Filename):
     print(Filename+" : Not Found\a")
     main()
 
-def unknown_error():
-    print("\aSome unknown error occured.")
+def unknown_error(param):
+    #param is used to know which function called this error
+    print("\aSome unknown error occured. Err no : "+str(param))
 
 #----------Error def end here------------
 
@@ -62,7 +63,7 @@ def is_available(pathToFile):
                 noFile_error(pathToFile)
                 return False
     except:
-        unknown_error()
+        unknown_error(1)
 
 def showman(command):
     #This shows the available functions in this terminal
@@ -191,6 +192,9 @@ def clear():
 
 def mv(names):
     #Moves the file to the said directory.
+    #Heres a catch. Damn it!
+    #We need to know if where we need to move is a dir name or just a filename.
+    #Coz if its just a file name, we need not check if it exists. 
     posSpace = names.index(" ")
     try:
         fileToMove = os.getcwd()+"\\"+names[:posSpace]  #The path to the file to be moved.
@@ -200,13 +204,22 @@ def mv(names):
     if not is_available(fileToMove):
         return False
     whereToMove = names[posSpace+1:]                #The path where it is to be moved. 
-    if not is_available(whereToMove):
-        return False
+    #whereToMove can be just a file name too. So lets just try to check if its a dir.
+    #If not a dir, then probably a filename.
+    is_folder = False
+    try:
+        #This will try to see if where to move has a dir name in it.
+        #If it does then it will check if its a dir by calling is_available()
+        if os.path.dirname(whereToMove) != "" :
+            if is_available(os.path.dirname(whereToMove)):
+                is_folder  = True
+    except:
+        pass
     #If it got past above then probably the source and destination are available
     try:
         os.rename(fileToMove, whereToMove)
     except:
-       unknown_error()
+       unknown_error(2)
  
 #--------cat-------------
 #Definition of all functions used for cat start here. 
