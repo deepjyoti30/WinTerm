@@ -231,6 +231,7 @@ def mv(names):
 
 def checkCat(name):
     #The cat commnad.
+    #NOTE Some Options of cat has to be reworked. Will work on it tommorow.
     #This function just checks the options. The main function would be done by the following cat_exec() function. 
     #The syntax is cat [OPTION] [FILE]...
     #We can make the OPTION default to read which will read and display the contents of the file
