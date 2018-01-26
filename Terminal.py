@@ -105,8 +105,16 @@ def showman(command):
     try:
         whichFun = command[4:]
         print(fun[whichFun], end='')
+        if whichFun == 'cat':
+            print("\nOPTIONS are : ", end='')
+            for i in range(len(available_Options_cat)):
+                print(available_Options_cat[i], end='  ')
+        elif whichFun == 'grep':
+            print("\nOPTIONS are : ", end='')
+            for i in range(len(available_Options_grep)):
+                print(available_Options_grep[i], end='  ')
     except:
-        print("Please enter a valid Command\a. The Syntax is man [COMMAND NAME]", end='')
+        print("\nPlease enter a valid Command\a. The Syntax is man [COMMAND NAME]", end='')
 
 #------COMMANDS--------
 #Below is the definition of all the commands.
@@ -249,6 +257,8 @@ def mv(names):
 #--------cat-------------
 #Definition of all functions used for cat start here. 
 
+available_Options_cat = ['n', 'e', 'T', 'r', 'm', 'a', 'w']
+
 def checkCat(name):
     #The cat commnad.
     #NOTE Some Options of cat has to be reworked. Will work on it tommorow.
@@ -257,7 +267,6 @@ def checkCat(name):
     #We can make the OPTION default to read which will read and display the contents of the file
     #We need to make a list of options available to check if the passed option is valid.
     #If its not a valid option then pass the option to file name and see if the file exists in the working directory
-    available_Options_cat = ['n', 'e', 'T', 'r', 'm', 'a', 'w']
     Option = "r"
     File = ""
     File2 = ' '
