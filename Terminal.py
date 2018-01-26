@@ -1,5 +1,5 @@
 import os
-import string
+import shutil
 import threading
 
 #Below is a class to use threading to find files.
@@ -194,22 +194,29 @@ def touch(nameOfFile):
 
 def rm(fileName):
     #Remove command.
-    if fileName[:3] == "-rf":
-            os.remove(fileName[4:])
-    else:
-        if os.path.isdir(fileName):
-            counter  = 0
-            for files in os.listdir(fileName):
-                if counter > 0 or not files:
-                    break
-                counter += 1
-            if counter > 0:
-                print("\a Folder is not empty!", end='')
-        else:
-            if is_available(fileName):
-                os.remove(fileName)
+    try:
+        if fileName[:3] == "-rf":
+            if is_available(fileName[4:]):
+                shutil.rmtree(fileName[4:])
             else:
-                noFile_error(fileName)
+                noFile_error(fileName[4:])
+        elif is_available(fileName):
+            if os.path.isdir(fileName):
+                counter  = 0
+                for files in os.listdir(fileName):
+                    if counter > 0 or not files:
+                        break
+                    counter += 1
+                if counter > 0:
+                    print("\a Folder is not empty!", end='')
+                else:
+                    os.rmdir(fileName)
+            else:
+                os.remove(fileName)
+        else:
+            noFile_error(fileName)
+    except:
+        unknown_error(5)
 
 def MakeDir(name):
     #Makes a new folder.
