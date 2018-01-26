@@ -122,13 +122,14 @@ def locate(details):
 
 def cd(command):
     #The change directory command.
+    currentPath = os.getcwd()
     if command[:2] == "..":
-        currentPath = os.getcwd()
-        #Find if \ is present from end
-        pos = currentPath[::-1].index("\\")
-        newPath = currentPath[:len(currentPath) - pos]
-        os.chdir(newPath)
+        #Find dirname of currentPath
+        os.chdir(os.path.dirname(currentPath))
     elif command[:2] == "--":
+        #If -- is present then we want to move to the root of the working directory path
+        rootpath = currentPath[:currentPath.find("\\")]
+        rootpath += "\\"
         os.chdir(rootpath)
     else:
         newPath = command
