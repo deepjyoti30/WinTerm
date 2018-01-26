@@ -13,18 +13,13 @@ Please add comments wherever is necessary. Indentation is always appreciated.
 
 ## Working Functions
 
-1. ls : Working
-2. man : Working
-3. cd : Working 
-4. touch : Working
-5. cat : Some Options not working yet
-6. rm : Working
-7. mkdir : Working
-8. clear : Working
-9. mv : Working
-10. locate : Working (No options should be used)
-11. grep : -r, -i and searching as regular expression not working
-12. rmdir : Working
+ls, man, cd, touch, rm, rmdir, mkdir, clear, mv, locate.
+
+## Functions in Progress
+
+Those Fuctions which lack a few Options but are usable.
+
+grep, cat.
 
 ## License
 
