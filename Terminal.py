@@ -29,6 +29,12 @@ def unknown_error(param):
 
 #----------Error def end here------------
 
+def give_rootPath():
+    #This one returns the rootpath of the current working directory
+    currentPath = os.getcwd()
+    rootPath = currentPath[:currentPath.index("\\")] + "\\"
+    return rootPath
+
 def is_available(pathToFile):
     #This function checks if file or folder is available.
     #Return : True or False
@@ -74,7 +80,8 @@ def showman(command):
     'mkdir':'Usage : mkdir [DIR NAME]\nUsed to create a new directory.',
     'clear':'Usage : clear \nUsed to clear the screen.',
     'mv':'Usage : mv [SOURCE] [DESTINATION] \nUsed to move a file from SOURCE to DESTINATION',
-    'cat':'Usage : cat [OPTION] [FILENAME] \nUsed to '}
+    'cat':'Usage : cat [OPTION] [FILENAME] \nUsed to ',
+    'locate' : 'Usage : locate [FILENAME] \nUsed to locate a file in the working Drive.\nNOTE : Make sure not to try on the drive where Windows is installed since there is lack of permission.'}
     #fun is a dictionary. [Functio Name] : [Command Name]
     #It should be updated after adding a working function
     try:
@@ -89,7 +96,7 @@ def showman(command):
 #Locate functions all def start here
 def Show(pathtoLaunch):                   
     exitFlag = True   
-    input("\t\tFound in " + pathtoLaunch)
+    input("Found in " + pathtoLaunch)
     main()
 
 def List(pathToSearch, fileTofind):
@@ -101,11 +108,9 @@ def List(pathToSearch, fileTofind):
                 if os.path.isdir(pathToSearch + files) and files != "System Volume Information" :
                     thread = myThread(pathToSearch + files + "\\", fileTofind)
                     thread.start()
+                    thread.join()
             except:
                 pass
-    if threading.active_count() == 1:
-        exitFlag = True
-        input("\t\tFile Not Found!")
 
 def locate(details):
     #The function to search files
@@ -113,7 +118,7 @@ def locate(details):
     #For Now syntax is locate [File to Find]
     try:
         fileName = details[7:]
-        List(rootpath, fileName)
+        List(give_rootPath(), fileName)
     except:
         print("Please Follow the syntax", end='')
 
@@ -121,15 +126,12 @@ def locate(details):
 
 def cd(command):
     #The change directory command.
-    currentPath = os.getcwd()
     if command[:2] == "..":
         #Find dirname of currentPath
-        os.chdir(os.path.dirname(currentPath))
+        os.chdir(os.path.dirname(os.getcwd()))
     elif command[:2] == "--":
         #If -- is present then we want to move to the root of the working directory path
-        rootpath = currentPath[:currentPath.find("\\")]
-        rootpath += "\\"
-        os.chdir(rootpath)
+        os.chdir(give_rootPath())
     else:
         newPath = command
         if os.path.isdir(newPath):
