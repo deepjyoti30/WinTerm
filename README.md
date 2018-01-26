@@ -32,4 +32,4 @@ This project is licensed under the Apache License Version 2.0 - see the [LICENSE
 
 ### NOTE
 
-Some syntax may not be exactly same to Linux. Please use man [COMMAND] to see the syntax.
+Some syntax may not be exactly same to Linux. Please use ' man [COMMAND] ' to see the syntax.
