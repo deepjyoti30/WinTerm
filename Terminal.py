@@ -11,6 +11,16 @@ class myThread(threading.Thread):
     def run(self):
         List(self.pathToSearch, self.fileTofind)
 
+#Below is a class to run functions used in grep in multiple threads
+class grepThread(threading.Thread):
+    def __init__(self, keyword, extension, path):
+        threading.Thread.__init__(self)
+        self.keyword = keyword
+        self.extension = extension
+        self.path = path
+    def run(self):
+        find_in_all_readable(self.keyword, self.extension, self.path)
+
 def showPath():
     #This one just shows the current path
     print(os.getcwd(), end='>')
@@ -360,15 +370,26 @@ def grep(command):
             option_not_available(Option, "grep")
             return False
         file_name = command[-command[::-1].index('"')+1:]
-        if not is_available(file_name):
-            noFile_error(file_name)
-            return False
+        if file_name != 'file*.*'
+            if not is_available(file_name):
+                noFile_error(file_name)
+                return False
+        #If file_name == file*.* then we need to check all files with extensions in extension_of_Files_tosearch 
         #Now that we have the file we want to search and the option
         keyword = command[command.index('"')+1:-1-command[::-1].index('"')]
         grep_exec(Option, file_name, keyword)
         #Now we have the kewyword too.
     except:
         pass
+
+def grep_exec(Option, fileName, keyword):
+    #This will execute the grep command
+    if Option == '':
+        if fileName != 'file*.*':
+            find_in_File(fileName, keyword)
+        else:
+            for extension in range(len(extension_of_Files_tosearch)):
+                find_in_all_readable(keyword, extension, path)
 
 def find_in_File(file, keyword, conditions = ''):
     #This will find keyword in file
@@ -380,11 +401,16 @@ def find_in_File(file, keyword, conditions = ''):
         if keyword in read_word:
             print(read_word, end='')
 
-def grep_exec(Option, fileName, keyword):
-    #This will execute the grep command
-    if Option == '':
-        find_in_File(fileName, keyword)
-
+def find_in_all_readable(keyword, extension, path):
+    #This will find the keyword in all files with given extension
+    for stuff in os.listdir(path):
+        if os.path.isdir(stuff) and stuff != "System Volume Information":
+            thread = grepThread()
+            thread.start()
+            thread.join()
+        else:
+            if stuff.endswith(extension):
+                find_in_File(stuff, keyword)
 
 #------COMMANDS/----------
 #The function list ends here.
