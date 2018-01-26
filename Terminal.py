@@ -137,7 +137,7 @@ def cd(command):
         else:
             print(newPath+": No such directory found\a", end='')
 
-def listDir(cmd):
+def ls(cmd):
     #The list directory command.
     folder = os.getcwd()
     if len(cmd) > 2:
@@ -206,13 +206,12 @@ def mv(names):
     whereToMove = names[posSpace+1:]                #The path where it is to be moved. 
     #whereToMove can be just a file name too. So lets just try to check if its a dir.
     #If not a dir, then probably a filename.
-    is_folder = False
     try:
         #This will try to see if where to move has a dir name in it.
         #If it does then it will check if its a dir by calling is_available()
         if os.path.dirname(whereToMove) != "" :
-            if is_available(os.path.dirname(whereToMove)):
-                is_folder  = True
+            if not is_available(os.path.dirname(whereToMove)):
+                return False
     except:
         pass
     #If it got past above then probably the source and destination are available
@@ -299,7 +298,7 @@ def runCommand(cmd):
     if cmd == "exit":
         return 0
     elif cmd[:2] == "ls":
-        listDir(cmd)
+        ls(cmd)
     elif cmd[:6] == "locate":
         locate(cmd)
     elif cmd[:3] == "man":
