@@ -269,96 +269,118 @@ def mv(names):
 #--------cat-------------
 #Definition of all functions used for cat start here. 
 
-available_Options_cat = ['n', 'e', 'T', 'r', 'm', 'a', 'w']
+available_Options_cat = ['-n', '-e', '-T', ]
 
 def checkCat(name):
     #The cat commnad.
-    #NOTE Some Options of cat has to be reworked. Will work on it tommorow.
     #This function just checks the options. The main function would be done by the following cat_exec() function. 
-    #The syntax is cat [OPTION] [FILE]...
+    #The syntax is cat -[OPTION] [FILE]...
     #We can make the OPTION default to read which will read and display the contents of the file
     #We need to make a list of options available to check if the passed option is valid.
     #If its not a valid option then pass the option to file name and see if the file exists in the working directory
-    Option = "r"
-    File = ""
-    File2 = ' '
-    posSpace = -1
-    while True:
-        try:
-            try:
-                #We need to put this in Try because if no option is added it will show error
-                #But no option means we just need to read the file
-                posSpace = name.index(" ") 
-                Option = name[1:posSpace]
-            except:
-                #If it failed in try then check if a new file should be created, i:e if ><filename> is passed
-                try:
-                    if name[0] == '>' : 
-                        #Probably a new file should be made.
-                        Option = 'm'
-                        File = name[1:]
-                        break 
-                    else:
-                        #If it enters here then we need to check for cat [Filename] > [Filename]
-                        try:
-                            if '>' in name:
-                                pos = name.index('>')
-                                if name[pos+1] == '>':
-                                    #This means we need to append
-                                    Option = 'a'
-                                    File = name[:pos-1]
-                                    File2 = name[pos+3:]
-                                else:
-                                    #This means we need to overwrite stuff in File2 with what is in File1
-                                    Option = 'w'
-                                    File = name[:pos-1]
-                                    File2 = name[pos+2:]
-                            if not is_available(File2):
-                                noFile_error()
-                                return False
-                        except:
-                            unknown_error(3)
-                            return False
-                except:
-                    unknown_error(3)
-                    return False
-            if Option not in available_Options_cat:
-                option_not_available(Option, "cat")
-                return False
-            File = name[posSpace+1:]
-        except:
-            pass
-        if not is_available(File):
-                noFile_error(File)
-                return False
-        cat_exec(Option, File, File2)
-        break
+    #This will be like the executor.
+    #It will send the name to be checked if it is for single file or multiple files
+    Option = cat_singleFile(name)
+    if Option == 0:
+        return False
+    if not Option:
+        Option = cat_doubleFiles(name)
+        if not Option:
+            option_not_available('','cat')
+            return False
+    return True
+            
 
-def cat_exec(Option, File1, File2 = " "):
-    openMode = {'w':'w', 'a':'a'}
-    open_the_File = open(File1, "r")
+def cat_singleFile(name):
+    #This will check if the command is for single files
+    #If it is then it will be sent to cat_exec() to be executed
+    #RETURNS : TRUE OR FALSE OR 0 if the option is -[] type but not available in the list
+    Option = ''
+    File = ''
+    try:
+        #Try to find the - in the passed argue which is name
+        if name[0] == '-' :
+            Option = name[:2]
+            if Option not in available_Options_cat:
+                option_not_available(Option, 'cat')
+                return 0
+            File = name[3:]
+            cat_exec(Option, File)
+            return True
+        else:
+            #If Options not in available Options list then theres a possibility that it is just a command to read the file
+            #Or something like cat ^name : we need to create name in this case
+            #First lets check if its a > cat command
+            if name[0] == '>':
+                cat_exec('m', name[1:])
+                return True
+            elif '>' not in name or '<' not in name:
+                print("Entered")
+                if is_available(name):
+                    cat_exec('', name)
+                    return True
+    except:
+        unknown_error(5)
+
+def cat_doubleFiles(name):
+    #This will check name for stuff like file1 > file2 or file1 >> file2 or file1 < file2
+    File = ''
+    File2 = ''
+    try:
+        if '>' in name or '<' in name:
+            #There's a possibility its a two file operation
+            try:
+                pos = name.index('>')
+                #If > is not there then it will give error so it is in try
+                if name[pos+1] == '>':
+                    #We need to append file1 to file2
+                    File = name[:pos-1]
+                    File2 = name[pos+3:]
+                    cat_exec('>>', File, File2)
+                    return True
+                else:
+                    #We need to overwrite file2 and put file1 stuff in there
+                    File = name[:pos-1]
+                    File2 = name[pos+2:]
+                    cat_exec('>', File, File2)
+                    return True
+            except:
+                #Here we should try to see if it is the < command
+                pass
+    except:
+        pass
+
+def cat_exec(Option, File1, File2 = ''):
+    if Option != 'm':
+        open_the_File = open(File1, "r")
+    if File2 != '':
+        if Option == '>>':
+            open_File2 = open(File2, 'a')
+        elif Option == '>':
+            open_File2 = open(File2, 'w')
     countLine = 0
     while True:
-            readLine = open_the_File.readline()
-            if not readLine:
-                break
-            if Option == "n":
+            if Option != 'm':
+                readLine = open_the_File.readline()
+                if not readLine:
+                    break
+            if Option == '-n':
                 countLine += 1
                 print(str(countLine)+" "+readLine, end='')
-            elif Option == "e":
+            elif Option == "-e":
                 if readLine == " ":
                     print("$", end='')
                 else:
                     print(readLine[:len(readLine)-1]+"$", end='\n')
-            elif Option == "T":
+            elif Option == "-T":
                 '^I'.join(readLine.split())
                 print(readLine, end='')
-            elif Option == 'r':
+            elif Option == '':
                 print(readLine, end='')
             elif Option == 'm':
                 touch(File1)
-            elif Option == 'a' or Option == 'w':
-                open_File2 = open(File2, openMode[Option])
+                return True
+            elif Option == '>' or Option == '>>':
                 open_File2.write(readLine)
     open_the_File.close()    
 
