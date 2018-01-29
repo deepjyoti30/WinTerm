@@ -309,12 +309,12 @@ def cat_singleFile(name):
             return True
         else:
             #If Options not in available Options list then theres a possibility that it is just a command to read the file
-            #Or something like cat ^name : we need to create name in this case
+            #Or something like cat >name : we need to create name in this case
             #First lets check if its a > cat command
             if name[0] == '>':
                 cat_exec('m', name[1:])
                 return True
-            elif '>' not in name or '<' not in name:
+            elif '>' not in name and '<' not in name:
                 print("Entered")
                 if is_available(name):
                     cat_exec('', name)
