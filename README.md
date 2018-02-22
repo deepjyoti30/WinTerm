@@ -25,6 +25,10 @@ Please add comments wherever is necessary. Indentation is always appreciated.
 
 This project is licensed under the Apache License Version 2.0 - see the [LICENSE.md](LICENSE) for details.
 
+## Thanks
+
+[Jonathan Hartley](https://github.com/tartley) for [Colorama](https://github.com/tartley/colorama) .
+
 ### NOTE
 
 Some syntax may not be exactly same to Linux. Please use ' man [COMMAND] ' to see the syntax.
