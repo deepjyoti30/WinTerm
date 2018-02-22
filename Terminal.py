@@ -37,16 +37,20 @@ def showPath():
 def noFile_error(Filename=''):
     #This function shows that Filename was not found.
     #End the exec of the function after calling this  function
-    print(Filename+" : Not Found\a")
+    print(Fore.RED + Filename+" : Not Found\a" + Style.RESET_ALL)
 
 def unknown_error(param):
     #param is used to know which function called this error
-    print("\aSome unknown error occured. Err no : "+str(param)+"\nPlease take a look at the command syntax using 'man [COMMAND]'", end='')
+    print(Fore.RED + "\aSome unknown error occured. Err no : "+str(param)+"\nPlease take a look at the command syntax using 'man [COMMAND]'" + Style.RESET_ALL, end='')
 
 def option_not_available(option, command):
     #This will show if the provided option is not found available for the command
     #End the exec of the function after calling this  function
-    print(option+"\a : No such option available in "+command+" command")
+    print(Fore.RED + option+"\a : No such option available in "+command+" command" + Style.RESET_ALL)
+
+def unknown_command(cmd):
+    #This will be called when an unknown command is passed  by the user
+    print('\a' + cmd + Fore.RED + ' : No such command Available' + Style.RESET_ALL, end=' ')
 
 #----------Error def end here------------
 
@@ -446,7 +450,7 @@ def openFile(name):
             fileAvailable = True
             break
     if not fileAvailable:
-        print(name+" : No such file found\a")
+        noFile_error(name)
     else:
         os.startfile(name)
 
