@@ -99,7 +99,7 @@ def showman(command):
     #The syntax is man [COMMAND NAME]
     #The command is passed to see which functions manual the user wants
     fun = {'cd':'Usage : cd [DIR NAME] \nUsed to change directory.',
-    'ls':'Usage : ls [DIR NAME] \nUsed to list a directory.',
+    'ls':'Usage : ls [DIR NAME] -[OPTION] \nUsed to list a directory.',
     'touch':'Usage : touch [FILE NAME] \nUsed to create a new file.',
     'rm':'Usage : rm [FILE NAME] \nUsed to remove a file or folder.',
     'mkdir':'Usage : mkdir [DIR NAME]\nUsed to create a new directory.',
