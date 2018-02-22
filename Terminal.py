@@ -1,7 +1,12 @@
+from __future__ import print_function
+import fixpath #Required by colorama
+from colorama import init, Fore, Style
 import os
 import shutil
 import threading
+import sys
 
+init()
 #Below is a class to use threading to find files.
 class myThread(threading.Thread):
     def __init__(self, pathToSearch, fileTofind):
@@ -167,6 +172,11 @@ def cd(command):
         else:
             print(newPath+": No such directory found\a", end='')
 
+#----------ls command-----------
+
+#This list will contain all the executable files in windows to show them with a green accent in terminal
+executables = ['py', 'exe', 'msi', 'bat']
+
 def ls(cmd):
     #The list directory command.
     folder = os.getcwd()
@@ -180,14 +190,20 @@ def ls(cmd):
                 return False
         except:
             pass
-    printCount = 0
-    #printCount is just to keep track of printing so that the output doesnt look messy
     for files in os.listdir(folder):
-        if printCount == 4 :
-            print("")
-            printCount = 0
-        print(files, end=' ')
-        printCount += 1
+        if os.path.isdir(folder + '\\' + files):
+            #If its a directory then print in blue
+            print(Fore.BLUE + files + Style.RESET_ALL, end=' ')
+        else :
+            #Check if its an exec file
+            flag  = False
+            for ext in executables:
+                if files.endswith(ext):
+                    flag = True
+                    print(Fore.GREEN + files + Style.RESET_ALL, end= ' ')
+                    break
+            if not flag :
+                print(files, end= ' ')
 
 def touch(nameOfFile):
     #Makes a new file.
