@@ -177,12 +177,29 @@ def cd(command):
 #This list will contain all the executable files in windows to show them with a green accent in terminal
 executables = ['py', 'exe', 'msi', 'bat']
 
-def ls(cmd):
-    #The list directory command.
+#This will be the list pof available options in ls used to check if the option is valid or not
+options_in_ls = ['l', 'r', 't']
+
+def grab(cmd):
+    #This should grab all the extra options.
+    #The ls command should be like this ls -[OPTIONS][OPTIONS]
+    #So it will search for all the valid options after the '-' sign
     folder = os.getcwd()
     if len(cmd) > 2:
         try:
-            tempFolder = cmd[3:]
+            flag = False
+            posSpace_ls = cmd.index(' ')
+            try:
+                posSign_ls = cmd.index('-')
+                if posSign_ls - posSpace_ls > 1:
+                    flag = True
+            except:
+                #If the execution comes here then prob there was no '-' in the command
+                tempFolder = cmd[posSpace_ls+1:len(cmd)]
+            if flag:
+                #If flag happens to be true then probably we need to name tempFolder
+                tempFolder = cmd[posSpace_ls+1:posSign_ls-1]
+            #Since we have tempFolder now, just check if the folder is available or not
             if os.path.isdir(tempFolder):
                 folder = tempFolder
             else:
@@ -190,20 +207,39 @@ def ls(cmd):
                 return False
         except:
             pass
+    #Above checks if any directory is passed as argue then it exists or not.
+    try:
+        opt = cmd[cmd.index('-')+1:]
+        try:
+            for single_options in opt:
+                if single_options in options_in_ls:
+                    disp(folder, single_options)
+                    return True 
+        except:
+            option_not_available(opt, 'ls')
+    except:
+        disp(folder)
+
+def disp(folder, option = ' '):
+    #This will display.
+    #It will do the final task of displaying.
+    end_option = ' '
+    if option == 'l':
+        end_option = '\n'
     for files in os.listdir(folder):
         if os.path.isdir(folder + '\\' + files):
             #If its a directory then print in blue
-            print(Fore.BLUE + files + Style.RESET_ALL, end=' ')
+            print(Fore.BLUE + files + Style.RESET_ALL, end=end_option)
         else :
             #Check if its an exec file
             flag  = False
             for ext in executables:
                 if files.endswith(ext):
                     flag = True
-                    print(Fore.GREEN + files + Style.RESET_ALL, end= ' ')
+                    print(Fore.GREEN + files + Style.RESET_ALL, end= end_option)
                     break
             if not flag :
-                print(files, end= ' ')
+                print(files, end= end_option)
 
 def touch(nameOfFile):
     #Makes a new file.
@@ -542,7 +578,7 @@ def runCommand(cmd):
     if cmd == "exit":
         return 0
     elif cmd[:2] == "ls":
-        ls(cmd)
+        grab(cmd)
     elif cmd[:6] == "locate":
         locate(cmd)
     elif cmd[:3] == "man":
