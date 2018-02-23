@@ -54,6 +54,9 @@ def show_about():
 #-------ERROR-------
 #Below are definitions of errors to be shown.
 
+#This is a dict that stores the param passed by function when they throw an unknown error. MAkes easier to debug. 
+unknow_error_dict = {1 : 'is_available', 2 : 'mv', 3 : 'grep', 4 : 'rm', 5 : 'cat_singleFile', 6 : 'cp', 7 : 'showman'}
+
 def noFile_error(Filename=''):
     #This function shows that Filename was not found.
     #End the exec of the function after calling this  function
@@ -152,7 +155,7 @@ def showman(command):
             for i in range(len(available_Options_grep)):
                 print(available_Options_grep[i], end='  ')'''
     except:
-        unknown_error(10)
+        unknown_error(7)
 
 #------COMMANDS--------
 #Below is the definition of all the commands.
@@ -255,9 +258,13 @@ def disp(folder, option = ' '):
     #This will display.
     #It will do the final task of displaying.
     end_option = ' '
+    #files in folder will be the list of files in the folder
+    files_inFolder = os.listdir(folder)
     if option == 'l':
         end_option = '\n'
-    for files in os.listdir(folder):
+    if option == 'r':
+        files_inFolder =  files_inFolder[::-1]
+    for files in files_inFolder:
         if os.path.isdir(folder + '\\' + files):
             #If its a directory then print in blue
             print(Fore.BLUE + files + Style.RESET_ALL, end=end_option)
@@ -271,6 +278,8 @@ def disp(folder, option = ' '):
                     break
             if not flag :
                 print(files, end= end_option)
+
+#-----ls ends here-------
 
 def touch(nameOfFile):
     #Makes a new file.
@@ -304,7 +313,7 @@ def rm(fileName):
         else:
             noFile_error()
     except:
-        unknown_error(5)
+        unknown_error(4)
 
 def MakeDir(name):
     #Makes a new folder.
@@ -548,7 +557,7 @@ def grep(command):
         grep_exec(Option, file_name, keyword)
         #Now we have the kewyword too.
     except:
-        unknown_error(4)
+        unknown_error(3)
         return False
 
 def grep_exec(Option, fileName, keyword):
