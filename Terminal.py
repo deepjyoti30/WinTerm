@@ -1,5 +1,4 @@
 from __future__ import print_function
-import fixpath #Required by colorama
 from colorama import init, Fore, Style
 import os
 import shutil
@@ -30,6 +29,25 @@ class grepThread(threading.Thread):
 def showPath():
     #This one just shows the current path
     print(os.getcwd(), end='>')
+
+#-------Show on launch---------
+
+working_Functions = ['ls', 'man', 'cd', 'touch', 'rm', 'rmdir', 'mkdir', 'clear', 'mv', 'locate', 'cp']
+
+wip_Functions = ['grep', 'cat']
+
+def show_about():
+    #This will show the available commands at launch.
+    print(Fore.GREEN + '2017-18 : developed by Deepjyoti Barman' + Style.RESET_ALL)
+    print('Working functions are : ', end='')
+    for func in working_Functions:
+        print(Fore.CYAN + func, end=' | ')
+    print(Style.RESET_ALL + '\n\nWork in progress functions are : ', end='')
+    for func in wip_Functions:
+        print(Fore.RED + func, end=' | ')
+    print(Style.RESET_ALL + '\n\nTo know more about them use : man "command name"')
+    input("press any Key when you are done.")
+    os.system('cls')
 
 #-------ERROR-------
 #Below are definitions of errors to be shown.
@@ -608,6 +626,7 @@ def runCommand(cmd):
     else:
         openFile(cmd)
 
+show_about()
 def main():
     while True:
         showPath()
