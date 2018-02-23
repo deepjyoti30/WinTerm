@@ -30,11 +30,13 @@ def showPath():
     #This one just shows the current path
     print(os.getcwd(), end='>')
 
-#-------Show on launch---------
+#---List of functions to be used by other functions.
 
 working_Functions = ['ls', 'man', 'cd', 'touch', 'rm', 'rmdir', 'mkdir', 'clear', 'mv', 'locate', 'cp']
 
 wip_Functions = ['grep', 'cat']
+
+#-------Show on launch---------
 
 def show_about():
     #This will show the available commands at launch.
@@ -133,7 +135,14 @@ def showman(command):
     #It should be updated after adding a working function
     try:
         whichFun = command[4:]
-        print(fun[whichFun], end='')
+        if whichFun in working_Functions:
+            print(Fore.GREEN + fun[whichFun] + Style.RESET_ALL)
+        elif whichFun in wip_Functions:
+            print(Fore.RED + 'This command is still being worked on!\a' + Style.RESET_ALL)
+            print(Fore.CYAN + fun[whichFun] + Style.RESET_ALL)
+        else:
+            print("\nPlease enter a valid Command\a. The Syntax is man [COMMAND NAME]", end='')
+        '''print(fun[whichFun], end='')
         if whichFun == 'cat':
             print("\nOPTIONS are : ", end='')
             for i in range(len(available_Options_cat)):
@@ -141,9 +150,9 @@ def showman(command):
         elif whichFun == 'grep':
             print("\nOPTIONS are : ", end='')
             for i in range(len(available_Options_grep)):
-                print(available_Options_grep[i], end='  ')
+                print(available_Options_grep[i], end='  ')'''
     except:
-        print("\nPlease enter a valid Command\a. The Syntax is man [COMMAND NAME]", end='')
+        unknown_error(10)
 
 #------COMMANDS--------
 #Below is the definition of all the commands.
