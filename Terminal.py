@@ -354,7 +354,7 @@ def mv(names):
         pass
     #If it got past above then probably the source and destination are available
     try:
-        os.rename(fileToMove, whereToMove)
+        shutil.move(fileToMove, whereToMove)
     except:
        unknown_error(2)
  
@@ -499,7 +499,6 @@ def cp(name):
     is_dir = False
     try:
         src = name[:posSpace]
-        input(src+" is src")
         #Now check if src exists or not.
         if is_available(src):
             #So it exists. Now we nned to check if its a file or folder.
@@ -507,7 +506,6 @@ def cp(name):
                 is_dir = True
         #Now we need to check destination
         dst = name[posSpace+1:]
-        input(dst+" is dst")
         if is_dir:
             if not is_available(os.path.dirname(dst)):
                 MakeDir(os.path.dirname(dst))
