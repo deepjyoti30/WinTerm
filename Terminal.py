@@ -407,7 +407,7 @@ def cat_singleFile(name):
                 cat_exec('m', name[1:])
                 return True
             elif '>' not in name and '<' not in name:
-                print("Entered")
+                #print("Entered")
                 if is_available(name):
                     cat_exec('', name)
                     return True
