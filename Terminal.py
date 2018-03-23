@@ -639,6 +639,8 @@ def runCommand(cmd):
         grep(cmd[5:])
     elif cmd[:2] == 'cp':
         cp(cmd[3:])
+    elif cmd == 'about':
+        show_about()
     else:
         openFile(cmd)
 
