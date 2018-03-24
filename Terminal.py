@@ -32,9 +32,9 @@ def showPath():
 
 #---List of functions to be used by other functions.
 
-working_Functions = ['ls', 'man', 'cd', 'touch', 'rm', 'rmdir', 'mkdir', 'clear', 'mv', 'locate', 'cp']
+working_Functions = ['ls', 'man', 'cd', 'touch', 'rm', 'rmdir', 'mkdir', 'clear', 'mv', 'locate', 'cp', 'cat', 'grep']
 
-wip_Functions = ['grep', 'cat']
+wip_Functions = []
 
 #-------Show on launch---------
 
@@ -520,7 +520,7 @@ def cp(name):
 
 #-------grep---------
 
-available_Options_grep = ['', '-n', '-v', '^', '$', '-c']
+available_Options_grep = ['', '-n', '-v', '^', '$', '-c', '-h', '-s']
 extension_of_Files_tosearch = ['txt', 'html', 'py',]
 
 def grep(command):
@@ -569,7 +569,8 @@ def grep_exec(Option, fileName, keyword):
 def find_in_File(file, keyword, conditions = ''):
     #This will find keyword in file
     open_File = open(file, 'r')
-    print("Finding in "+file, end=':\n')
+    if(conditions != '-h'):
+        print("Finding in "+file, end=':\n')
     countLine = 0
     countmatch = 0
     while True:
@@ -593,6 +594,9 @@ def find_in_File(file, keyword, conditions = ''):
             if keyword in read_word:
                 countmatch += 1
                 print("Match : "+str(countmatch)+" "+read_word, end='')
+        elif conditions == '-s':
+            if keyword in read_word:
+                print("Found!", end=' ')
         else:
             if keyword in read_word:
                 print(read_word, end='')
