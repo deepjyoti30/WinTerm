@@ -491,30 +491,51 @@ def openFile(name):
         os.startfile(name)
 
 #-------cp---------
-def cp(name):
+def cp(command):
     #This function will work similar to cp.
     #We need to extract the source and destination from from name
-    posSpace = name.index(" ")
-    #The source and destination should be seperated by a spcace
-    is_dir = False
+    option = ''
     try:
-        src = name[:posSpace]
+        #check if theres an option.
+        pos_of = command.index('-')
+        option = command[pos_of:pos_of+2]
+        if option != '-i':
+            option_not_available(option, 'cp')
+            return False
+        command = command[pos_of+3:]
+    except:
+        pass
+    posSpace = command.index(" ")
+    #The source and destination should be seperated by a spcace
+    try:
+        src = command[:posSpace]
         #Now check if src exists or not.
         if is_available(src):
-            #So it exists. Now we nned to check if its a file or folder.
-            if os.path.isdir(src):
-                is_dir = True
-        #Now we need to check destination
-        dst = name[posSpace+1:]
-        if is_dir:
+            #So it exists.Check if the destination exists.
+            dst = command[posSpace+1:]
             if not is_available(os.path.dirname(dst)):
+                #If the dir of dest is not available then create it.
                 MakeDir(os.path.dirname(dst))
-            shutil.copytree(src, dst)
+                shutil.copytree(src, dst)
+            else:
+                #If the dir is already available then check if dst already exists.
+                dir_name = os.path.dirname(dst)
+                len_dir = len(dir_name)
+                dst_name = dst[len_dir+1:]
+                #dst_name is the name of the destiation file. It is extracted tp check if it already exists in the dir
+                for files in os.listdir(os.path.dirname(dst)):
+                    if files == dst_name:
+                        print("File with same name already exists!\a")
+                        ask = 'yes'
+                        if option == '-i':
+                            ask = input("Do you want to overwrite?[yes/no]")
+                        if ask == 'yes':
+                            shutil.copyfile(src, dst) 
+                        return True
+                shutil.copyfile(src, dst)
         else:
-            #We need to check if the directory of dst exists or not
-            if not is_available(os.path.dirname(dst)):
-                MakeDir(os.path.dirname(dst))
-            shutil.copy(src, dst)
+            noFile_error(src)
+            return False
     except:
         unknown_error(6)
 
