@@ -277,6 +277,8 @@ def touch(nameOfFile):
     make = open(nameOfFile, "w")
     make.close()
 
+#------rm-------
+
 def rm(fileName):
     #Remove command.
     try:
@@ -288,6 +290,20 @@ def rm(fileName):
         elif fileName[:3] == 'dir':
             if is_available(fileName[4:]):
                 shutil.rmtree(fileName[4:])
+        elif fileName[1:3] == '-i':
+            if is_available(fileName[4:]):
+                if not os.path.isdir(fileName[4:]):
+                    ask = input("Are you sure you want to delete? [y/n]")
+                    if ask == 'y':
+                        os.remove(fileName[4:])
+                else:
+                    for files in os.listdir(fileName[4:]):
+                        ask = input(files + ": Are you sure you want to delete? [y/n]")
+                        if ask == 'y':
+                            if os.path.isdir(fileName[4:] + "\\" +files):
+                                shutil.rmtree(fileName[4:] + "\\" +files)
+                            else:
+                                os.remove(fileName[4:] + "\\" +files)
         elif is_available(fileName[1:]):
             if os.path.isdir(fileName[1:]):
                 counter  = 0
