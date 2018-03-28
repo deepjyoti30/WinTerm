@@ -8,12 +8,11 @@ import sys
 init()
 #Below is a class to use threading to find files.
 class myThread(threading.Thread):
-    def __init__(self, pathToSearch, fileTofind):
+    def __init__(self, pathToSearch):
         threading.Thread.__init__(self)
         self.pathToSearch = pathToSearch
-        self.fileTofind = fileTofind
     def run(self):
-        List(self.pathToSearch, self.fileTofind)
+        List(self.pathToSearch)
 
 #Below is a class to run functions used in grep in multiple threads
 class grepThread(threading.Thread):
@@ -151,36 +150,55 @@ def showman(command):
 #------COMMANDS--------
 #Below is the definition of all the commands.
 
-#Locate functions all def start here
+#-----locate-------
+
+#locate actually makes a database of the files which is updated with the updatedb command
+
+folders_to_skip = ["System Volume Information"] #This folders will be skipped while creating the db
+
+db_path = "C:\\Database\\locate.db"
+drive_path = "E:"
+
+def updatedb():
+    #This will just erase all the data from the database and call the list function.
+    print("Updating database...")
+    erase_db = open(db_path, "w")
+    erase_db.close()
+    List()
+
+def writeUpdate(file_TO_WRITE):
+    # The whole drives file details will be stored in a file in C:
+    write_update = open(db_path, "a")
+    write_update.write(file_TO_WRITE + "\n")
+    write_update.close()
+
+
 def Show(pathtoLaunch):                   
     exitFlag = True   
     input("Found in " + pathtoLaunch)
-    main()
 
-def List(pathToSearch, fileTofind):
+def List(pathToSearch = "E:"):
+    pathToSearch += "\\"
     for files in os.listdir(pathToSearch):
-        if files == fileTofind:
-            Show(pathToSearch)
-        else :
-            try:
-                if os.path.isdir(pathToSearch + files) and files != "System Volume Information" :
-                    thread = myThread(pathToSearch + files + "\\", fileTofind)
-                    thread.start()
-                    thread.join()
-            except:
-                pass
+        if os.path.isdir(pathToSearch + "\\" + files) and files not in folders_to_skip:
+            newThread = myThread(pathToSearch + "\\" + files)
+            newThread.start()
+            newThread.join()
+        else:
+            writeUpdate(pathToSearch + "\\" + files)
 
-def locate(details):
-    #The function to search files
-    #Right Now it doesn't function the way locate works in Linux. Needs improvisation.
-    #For Now syntax is locate [File to Find]
-    try:
-        fileName = details[7:]
-        List(give_rootPath(), fileName)
-    except:
-        print("Please Follow the syntax", end='')
+def locate(keyword):
+    #This will check and display all the lines in test.db where the keyword is present
+    print("\a" + Fore.RED + "If this is the first time you're running this command, make sure you run 'updatedb' command!" + Style.RESET_ALL)
+    check_db = open(db_path, "r")
+    while True:
+        line = check_db.readline()
+        if not line: 
+            break
+        if keyword in line:
+            print(line, end='')
 
-#Ends here
+#--------------End------------
 
 def cd(command):
     #The change directory command.
@@ -675,7 +693,7 @@ def runCommand(cmd):
     elif cmd[:2] == "ls":
         grab(cmd)
     elif cmd[:6] == "locate":
-        locate(cmd)
+        locate(cmd[7:])
     elif cmd[:3] == "man":
         showman(cmd)
     elif cmd[:2] == "cd":
@@ -698,6 +716,8 @@ def runCommand(cmd):
         cp(cmd[3:])
     elif cmd == 'about':
         show_about()
+    elif cmd == 'updatedb':
+        updatedb()
     else:
         openFile(cmd)
 
