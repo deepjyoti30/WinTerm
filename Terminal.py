@@ -134,7 +134,7 @@ def showman(command):
     'rmdir' : 'Usage : rmdir [DIRECTORY NAME]\n Used to remove directories.',
     'cp' : 'Usage : cp [SOURCE] [DESTINATION]\n Used to Copy files or folders', 
     }
-    #fun is a dictionary. [Functio Name] : [Command Name]
+    #fun is a dictionary. [Function Name] : [Command Name]
     #It should be updated after adding a working function
     try:
         whichFun = command[4:]
@@ -145,15 +145,6 @@ def showman(command):
             print(Fore.CYAN + fun[whichFun] + Style.RESET_ALL)
         else:
             print("\nPlease enter a valid Command\a. The Syntax is man [COMMAND NAME]", end='')
-        '''print(fun[whichFun], end='')
-        if whichFun == 'cat':
-            print("\nOPTIONS are : ", end='')
-            for i in range(len(available_Options_cat)):
-                print(available_Options_cat[i], end='  ')
-        elif whichFun == 'grep':
-            print("\nOPTIONS are : ", end='')
-            for i in range(len(available_Options_grep)):
-                print(available_Options_grep[i], end='  ')'''
     except:
         unknown_error(7)
 
@@ -328,11 +319,30 @@ def clear():
     #Clears the screen.
     os.system("cls")
 
+#---------mv--------
+
+available_Options_mv = ['-i', '-b']
+
 def mv(names):
     #Moves the file to the said directory.
     #Heres a catch. Damn it!
     #We need to know if where we need to move is a dir name or just a filename.
-    #Coz if its just a file name, we need not check if it exists. 
+    #Coz if its just a file name, we need not check if it exists.
+    option = ''
+    try:
+        #check if theres an option.
+        try:
+            if names[0] == '-':
+                #This means an option is added.
+                option = names[:2]
+                if option not in available_Options_mv:
+                    option_not_available(option, 'mv')
+                    return False
+                names = names[3:]
+        except:
+            pass
+    except:
+        pass
     posSpace = names.index(" ")
     try:
         fileToMove = os.getcwd()+"\\"+names[:posSpace]  #The path to the file to be moved.
@@ -354,6 +364,13 @@ def mv(names):
         pass
     #If it got past above then probably the source and destination are available
     try:
+        if option == '-i':
+            if os.path.isfile(whereToMove):
+                ask = input("\aFile already exists. Do yoy want to overwrite?[no\yes]")
+                if ask != 'yes':
+                    return False
+        elif option == '-b':
+            shutil.copyfile(fileToMove, fileToMove+".bak")
         shutil.move(fileToMove, whereToMove)
     except:
        unknown_error(2)
@@ -497,12 +514,16 @@ def cp(command):
     option = ''
     try:
         #check if theres an option.
-        pos_of = command.index('-')
-        option = command[pos_of:pos_of+2]
-        if option != '-i':
-            option_not_available(option, 'cp')
-            return False
-        command = command[pos_of+3:]
+        try:
+            if command[0] == '-':
+                #This means an option is added.
+                option = command[:2]
+                if option != '-i':
+                    option_not_available(option, 'cp')
+                    return False
+                command = command[3:]
+        except:
+            pass
     except:
         pass
     posSpace = command.index(" ")
@@ -519,19 +540,14 @@ def cp(command):
                 shutil.copytree(src, dst)
             else:
                 #If the dir is already available then check if dst already exists.
-                dir_name = os.path.dirname(dst)
-                len_dir = len(dir_name)
-                dst_name = dst[len_dir+1:]
-                #dst_name is the name of the destiation file. It is extracted tp check if it already exists in the dir
-                for files in os.listdir(os.path.dirname(dst)):
-                    if files == dst_name:
-                        print("File with same name already exists!\a")
-                        ask = 'yes'
-                        if option == '-i':
-                            ask = input("Do you want to overwrite?[yes/no]")
-                        if ask == 'yes':
-                            shutil.copyfile(src, dst) 
-                        return True
+                if os.path.isfile(dst):
+                    print("File with same name already exists!\a")
+                    ask = 'yes'
+                    if option == '-i':
+                        ask = input("Do you want to overwrite?[yes/no]")
+                    if ask == 'yes':
+                        shutil.copyfile(src, dst) 
+                    return True
                 shutil.copyfile(src, dst)
         else:
             noFile_error(src)
