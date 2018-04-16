@@ -1,3 +1,10 @@
+#---------------------------------------------------------#
+#                                                         #
+#                          WINTERM                        #
+#                   A Terminal For Windows                #
+#                   Author: Deepjyoti Barman              #
+#                                                         #
+#---------------------------------------------------------#
 from __future__ import print_function
 from colorama import init, Fore, Style
 import os
@@ -27,7 +34,9 @@ class grepThread(threading.Thread):
 
 def showPath():
     #This one just shows the current path
-    print(os.getcwd(), end='>')
+    print()
+    print(Fore.LIGHTBLUE_EX + ' ' + os.getcwd(), end='\n >')
+    print(Style.RESET_ALL, end = '')
 
 #---List of functions to be used by other functions.
 
